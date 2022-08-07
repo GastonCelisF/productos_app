@@ -109,7 +109,7 @@ class _LoginForm extends StatelessWidget {
                 child: Text(
                   //si loginform isloading entonces espere de lo contraio valor ingresar
                   loginForm.isLoading
-                  ? 'Espere..'
+                  ? 'Espere...'
                   : 'Ingresar',
                   style:TextStyle(color: Colors.white),
                   ),
@@ -122,6 +122,7 @@ class _LoginForm extends StatelessWidget {
                 if(!loginForm.isValidform()) return;
                 loginForm.isLoading=true;
                 await Future.delayed(Duration(seconds: 2));
+                
                 loginForm.isLoading=false;
 
                 Navigator.pushReplacementNamed(context, 'home');

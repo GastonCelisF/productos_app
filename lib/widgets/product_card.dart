@@ -28,6 +28,8 @@ class ProductCard extends StatelessWidget {
               right: 0,
               child: _PriceTag()
               ),
+
+              //TODO: Mostrar de manera condicional..
               Positioned(
               top:0,
               left: 0,

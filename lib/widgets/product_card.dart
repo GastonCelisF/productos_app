@@ -1,10 +1,16 @@
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
+import 'package:productos_app/models/models.dart';
 
 
 class ProductCard extends StatelessWidget {
   
+  final Product product;
+
+  const ProductCard({
+    super.key,
+    required this.product});
 
   @override
   Widget build(BuildContext context) {
@@ -19,17 +25,24 @@ class ProductCard extends StatelessWidget {
           //Todos los widgets aparecen alineados en la parte inferior gracias a Aligment.bottomleft
           alignment: Alignment.bottomLeft,
           children: [
-            _BackgroundImage(),
+            _BackgroundImage(url: product.picture),
 
-            _ProductsDetail(),
+            _ProductsDetail(
+              title: product.name,
+              subtitle: product.id!,
+            ),
 
             Positioned(
               top:0,
               right: 0,
-              child: _PriceTag()
+              child: _PriceTag(
+                price: product.price,
+              )
               ),
 
-              //TODO: Mostrar de manera condicional..
+              
+              //si no esta dispoble se mostrara el no disponible
+              if( !product.available)
               Positioned(
               top:0,
               left: 0,
@@ -79,6 +92,11 @@ class _NotAvailable extends StatelessWidget {
 }
 
 class _PriceTag extends StatelessWidget {
+
+  final double price;
+
+  const _PriceTag({required this.price});
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -86,7 +104,7 @@ class _PriceTag extends StatelessWidget {
         fit: BoxFit.contain,
         child: Padding(
           padding: EdgeInsets.symmetric(horizontal: 10),
-          child: Text('\$103.99',style: TextStyle(color:Colors.white,fontSize: 20),)),
+          child: Text('\$$price',style: TextStyle(color:Colors.white,fontSize: 20),)),
       ),
       width: 100,
       height: 70,
@@ -101,6 +119,11 @@ class _PriceTag extends StatelessWidget {
 
 class _ProductsDetail extends StatelessWidget {
 
+  final String title;
+  final String subtitle;
+
+  const _ProductsDetail({required this.title, required this.subtitle});
+
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -112,12 +135,12 @@ class _ProductsDetail extends StatelessWidget {
       decoration: _BuildBoxDecoration(),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
-        children:const [
-          Text('Disco duro G',style: TextStyle(fontSize: 20,color: Colors.white,fontWeight: FontWeight.bold),
+        children: [
+          Text(title,style: TextStyle(fontSize: 20,color: Colors.white,fontWeight: FontWeight.bold),
           maxLines: 1,
           overflow: TextOverflow.ellipsis,
           ),
-          Text('Id del disco duro',style: TextStyle(fontSize: 15,color: Colors.white),          
+          Text(subtitle,style: TextStyle(fontSize: 15,color: Colors.white),          
           )
         ],
       ),
@@ -133,16 +156,24 @@ class _ProductsDetail extends StatelessWidget {
 
 class _BackgroundImage extends StatelessWidget {
   
-  @override
+  final String? url;
+
+  const _BackgroundImage({this.url});
+
+  @override 
   Widget build(BuildContext context) {
     return ClipRRect(
       borderRadius: BorderRadius.circular(25),
       child: Container(
         width: double.infinity,
         height: 400,
-        child: FadeInImage(
+        //ternario para que los productos que si su url(imagen) es nulo enviamos un nuevo widget que es una imagen(imagen default)
+        child: url == null ? Image(image: AssetImage('assets/no-image.jpg'),
+        fit: BoxFit.cover,)
+        // pero si la tenemos se la mandamos por el fade in image
+        : FadeInImage(
           placeholder: AssetImage('assets/jar-loading.gif'),
-           image: NetworkImage('https://dummyimage.com/400x300/000/fff'),
+           image: NetworkImage(url!),
            fit: BoxFit.cover,
            ),
     

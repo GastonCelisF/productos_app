@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
 
 class ProductImage extends StatelessWidget {
+
+  final String? url;
+
+  const ProductImage({ this.url});
   
   @override
   Widget build(BuildContext context) {
@@ -15,8 +19,14 @@ class ProductImage extends StatelessWidget {
           topLeft: Radius.circular(45),
           topRight: Radius.circular(45)
            ),
-          child: FadeInImage(
-            image:  NetworkImage('https://dummyimage.com/400x300/000/green'),
+          child: this.url == null
+          ? Image(
+            image: AssetImage('assets/no-image.jpg'),
+            fit:BoxFit.cover
+          )           
+          : FadeInImage(
+            //mando que si o si llegara el url porque yo ya tengo la validacion echa previamente
+            image:  NetworkImage(this.url!),
             placeholder: AssetImage('assets/jar-loading.gif'),
             fit: BoxFit.cover,
           ),

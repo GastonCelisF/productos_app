@@ -1,54 +1,43 @@
-
-
-
-
 import 'dart:convert';
 import 'package:flutter/material.dart';
-import 'package:productos_app/models/models.dart';
 import 'package:http/http.dart' as http;
+import 'package:productos_app/models/models.dart';
 
-class ProductsService extends ChangeNotifier{
-
-  
-  final String _baseUrl = 'flutter-varios-34ce6-default-rtdb.firebaseio.com';
-
-  // Lista donde de todos los productos que se encuentran en mi services.
+class ProductsService extends ChangeNotifier {
+  final String _baseUrl =
+      'flutter-productos-app-11884-default-rtdb.firebaseio.com';
   final List<Product> products = [];
-  late Product selectedProduct;
-  // prop para saber cuando estoy cargando y cuando no
-  bool isLoading = true;
+  Product? selectedProduct;
 
-  ProductsService(){
-  this.loadProducts();
+  bool isLoading = true;
+  // CONSTRUCTOR
+  ProductsService() {
+    this.LoadProducts();
   }
 
-  
-  Future<List<Product>> loadProducts()async{
-
-
+  Future<List<Product>> LoadProducts() async {
     this.isLoading = true;
     notifyListeners();
-    
-    final url = Uri.https(_baseUrl,'Products.json');
+
+    // PETICION DEL ENDPOINT GET LISTA PRODUCTOS
+    final url = Uri.https(_baseUrl, 'products.json');
+    // respuesta del endpoint...
     final resp = await http.get(url);
-    //la respuesta del body esta como string
-    //hay que parsearlo como si fuera un json
-    final Map<String,dynamic> productsMap = json.decode(resp.body);
+    // obtiene el mapa de la respuesta..
+    final Map<String, dynamic> productMap = json.decode(resp.body);
 
-    productsMap.forEach((key,value) { 
-       final tempProduct = Product.fromMap(value);
-       tempProduct.id = key;
-       //añadimos el producto como un add ya que lo tengo como final.
-       this.products.add(tempProduct);
+    // ya recibido el dinamic como un map se parsean  a la lista para mejor visualizacion y manejo de la informaicon..
+    // parseando cada una de las llaves (en este caso los productos).
+
+    productMap.forEach((key, value) {
+      final tempProduct = Product.fromJson(value);
+      tempProduct.id = key;
+      this.products.add(tempProduct);
     });
-
 
     this.isLoading = false;
     notifyListeners();
 
     return this.products;
-
   }
-
-
 }

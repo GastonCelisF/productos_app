@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:productos_app/providers/product_form_provider.dart';
 import 'package:productos_app/services/products_service.dart';
 import 'package:productos_app/widgets/widgets.dart';
 import 'package:provider/provider.dart';
@@ -12,7 +13,24 @@ class ProductScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     //redibujo el producto en caso de que suceda..
     final productService = Provider.of<ProductsService>(context);
+    return ChangeNotifierProvider(
+      create: (_) => ProductFormProvider(productService.selectedProduct!),
+      child: _ProductScreenBody(productService: productService),
+    );
+    //return
+  }
+}
 
+class _ProductScreenBody extends StatelessWidget {
+  const _ProductScreenBody({
+    super.key,
+    required this.productService,
+  });
+
+  final ProductsService productService;
+
+  @override
+  Widget build(BuildContext context) {
     return Scaffold(
       body: SingleChildScrollView(
         child: Column(
@@ -53,7 +71,7 @@ class ProductScreen extends StatelessWidget {
           ],
         ),
       ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.endDocked,
+      floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
       floatingActionButton: FloatingActionButton(
           child: Icon(Icons.save_outlined),
           onPressed: () {
@@ -66,6 +84,8 @@ class ProductScreen extends StatelessWidget {
 class _ProductForm extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    final productForm = Provider.of<ProductFormProvider>(context);
+    final product = productForm.product;
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: 10),
       child: Container(
@@ -79,6 +99,13 @@ class _ProductForm extends StatelessWidget {
               height: 10,
             ),
             TextFormField(
+              // NOMBRE DEL PRODUCTO EL ONCHANGE SI QUEREMOS HACER UN EDIT Y EL VLAIDADOR..
+              initialValue: product.name,
+              onChanged: (value) => product.name = value,
+              validator: (value) {
+                if (value == null || value.length < 1)
+                  return 'El nombre el obligatorio..';
+              },
               decoration: InputDecorations.authInputDecoration(
                   hintText: 'Nombre del Producto', labelText: 'Nombre:'),
             ),
@@ -89,6 +116,16 @@ class _ProductForm extends StatelessWidget {
               height: 10,
             ),
             TextFormField(
+              //  parseo a double
+              initialValue: '${product.price}',
+              // condicional para ver si el valor por insetado puede ser parseado, sino seteado con 0 en este caso.
+              onChanged: (value) {
+                if (double.tryParse(value) == null) {
+                  product.price = 0;
+                } else {
+                  product.price = double.parse(value);
+                }
+              },
               keyboardType: TextInputType.number,
               decoration: InputDecorations.authInputDecoration(
                   hintText: '\$150', labelText: 'Precio:'),
@@ -97,7 +134,7 @@ class _ProductForm extends StatelessWidget {
               height: 30,
             ),
             SwitchListTile.adaptive(
-                value: true,
+                value: product.available,
                 title: Text('Disponible'),
                 activeColor: Colors.indigo,
                 onChanged: (value) {

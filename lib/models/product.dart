@@ -4,6 +4,7 @@
 
 import 'dart:convert';
 
+// CONSTRUCTOR
 class Product {
   Product(
       {required this.available,

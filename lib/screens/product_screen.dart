@@ -24,7 +24,6 @@ class ProductScreen extends StatelessWidget {
 
 class _ProductScreenBody extends StatelessWidget {
   const _ProductScreenBody({
-    super.key,
     required this.productService,
   });
 

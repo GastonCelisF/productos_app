@@ -58,11 +58,18 @@ class ProductsService extends ChangeNotifier {
   }
 
   Future<String> updateProduct(Product product) async {
+    //endpoint al cual apuntamos..
     final url = Uri.https(_baseUrl, 'products/${product.id}.json');
+    //peticion , junto con su body
     final resp = await http.put(url, body: product.toRawJson());
     final decodedData = resp.body;
-    print(decodedData);
-    //TODO : actualizar el listado de productos..
+    //print(decodedData);
+
+  
+    final index = this.products.indexWhere((element) => element.id == product.id);
+    this.products[index] = product;
+
+
     return product.id!;
   }
 }

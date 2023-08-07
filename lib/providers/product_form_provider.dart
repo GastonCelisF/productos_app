@@ -6,6 +6,7 @@ class ProductFormProvider extends ChangeNotifier {
 
   Product product;
 
+//cuando se cree la instancia de form aca se guarda la instancia del producto
   ProductFormProvider(this.product);
 
   updateAvailability(bool value) {

@@ -48,6 +48,8 @@ class ProductsService extends ChangeNotifier {
 
     if (productoaGuardar.id == null) {
       // Es necesario crear
+
+      await this.createProduct(productoaGuardar);
     } else {
       // Actualiza
       await this.updateProduct(productoaGuardar);
@@ -71,5 +73,25 @@ class ProductsService extends ChangeNotifier {
 
 
     return product.id!;
+  }
+
+
+  Future<String> createProduct(Product product) async {
+    //endpoint al cual apuntamos..
+    final url = Uri.https(_baseUrl, 'products.json');
+    //peticion , junto con su body
+    final resp = await http.post(url, body: product.toRawJson());
+
+    //el decode en este caso es el id que firebase genera automaticamente..
+    final decodedData = json.decode(resp.body);
+    
+    product.id = decodedData['name'];
+
+
+    this.products.add(product);
+
+    //return product.id!;
+
+    return '';
   }
 }

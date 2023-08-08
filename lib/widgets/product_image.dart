@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 
 class ProductImage extends StatelessWidget {
@@ -18,20 +20,14 @@ class ProductImage extends StatelessWidget {
             child: ClipRRect(
               borderRadius: BorderRadius.only(
                   topLeft: Radius.circular(45), topRight: Radius.circular(45)),
-              child: this.url == null
-                  ? Image(
-                      image: AssetImage('assets/no-image.jpg'),
-                      fit: BoxFit.cover)
-                  : FadeInImage(
-                      //mando que si o si llegara el url porque yo ya tengo la validacion echa previamente
-                      image: NetworkImage(this.url!),
-                      placeholder: AssetImage('assets/jar-loading.gif'),
-                      fit: BoxFit.cover,
-                    ),
+              child: getImage(url)
+                  
             ),
           ),
         ));
   }
+
+  //TODO: QUE TIENEN TUS OJOS... QUE ME VUELVE LOCO TU CULO <3
 
   BoxDecoration _BuildBoxDecoration() => BoxDecoration(
           color: Colors.black,
@@ -43,4 +39,29 @@ class ProductImage extends StatelessWidget {
                 blurRadius: 10,
                 offset: Offset(0, 5))
           ]);
+
+
+Widget getImage(String? picture){
+
+if(picture == null)
+// para los productos nulos que no posean imagen..
+return Image(
+      image: AssetImage('assets/no-image.jpg'),
+      fit: BoxFit.cover
+      );
+  //if para los url que vengan comiencen con http    
+  if(picture.startsWith('http'))
+    return FadeInImage(
+        //mando que si o si llegara el url porque yo ya tengo la validacion echa previamente
+        image: NetworkImage(this.url!),
+        placeholder: AssetImage('assets/jar-loading.gif'),
+        fit: BoxFit.cover,
+      );
+//Retorno el picture de la foto con el file qeu solo necesita el path..
+return Image.file(
+ File(picture),
+ fit: BoxFit.cover,
+);      
+                            
+}          
 }

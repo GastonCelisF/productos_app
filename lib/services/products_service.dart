@@ -105,4 +105,47 @@ void updateSelectedProducImage(String path){
  notifyListeners();
 }
 
+
+Future<String?> uploadImage() async{
+//nos aseguramos de tener una imagen antes de hacer la peticion http
+  if(this.newPictureFile ==null) return null;
+
+this.isSaving = true;
+notifyListeners();
+
+final url = Uri.parse('https://api.cloudinary.com/v1_1/dtxqqa165/image/upload?upload_preset=yifypzpj');
+
+// se crea la peticion
+final imageUploadRequest = http.MultipartRequest('POST',url,);
+
+
+// se adjunta el archivo
+// ya hice la evaluacion previamente asi que mando obligatoriamente el path...
+final file = await http.MultipartFile.fromPath('file', newPictureFile!.path);
+
+imageUploadRequest.files.add(file);
+
+//stream response es la informacion que esperamos de la peticion...
+final streamResponse = await imageUploadRequest.send();
+
+final resp = await http.Response.fromStream(streamResponse);
+
+
+if(resp.statusCode != 200 && resp.statusCode != 201){
+  print('algo salio mal..');
+  print(resp.body);
+  return null;
+}
+
+//limpio propiedad porque ya la subi...
+this.newPictureFile =null;
+
+final decodedData = json.decode(resp.body);
+return decodedData['secure_url'];
+
+
+
+
+}
+
 }

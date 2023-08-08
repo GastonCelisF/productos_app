@@ -27,7 +27,7 @@ class ProductImage extends StatelessWidget {
         ));
   }
 
-  //TODO: QUE TIENEN TUS OJOS... QUE ME VUELVE LOCO TU CULO <3
+
 
   BoxDecoration _BuildBoxDecoration() => BoxDecoration(
           color: Colors.black,

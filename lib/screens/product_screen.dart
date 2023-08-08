@@ -63,10 +63,8 @@ class _ProductScreenBody extends StatelessWidget {
                           source: ImageSource.camera, imageQuality: 100
                         );
                         if (pickedFile == null) {
-                          print('NO SELECCIONO NADA');
                           return;
                         }
-                        print('Tenemos Imgaen ${pickedFile.path}');
                         productService.updateSelectedProducImage(pickedFile.path);
                       },
                       icon: Icon(
@@ -86,11 +84,19 @@ class _ProductScreenBody extends StatelessWidget {
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
       floatingActionButton: FloatingActionButton(
-          child: Icon(Icons.save_outlined),
-          onPressed: () async {
-            //TODO:Guardar producto
-            // si el formulario no es valido que no continue..
+          child: 
+          productService.isSaving 
+          ? CircularProgressIndicator( color: Colors.white,)
+          : Icon(Icons.save_outlined),          
+          onPressed: productService.isSaving  ? null
+          
+          : () async {
             if (!productForm.isValidForm()) return;
+            final String? imageUrl  = await productService.uploadImage();
+            // si el decode secure_url (la imagen que subi) es distinto de null
+            // la asigno a la proiedad picture de productForm que es el objeto que mando al abm..
+            if (imageUrl != null) productForm.product.picture = imageUrl;
+
             await productService.saveOrCreateProduct(productForm.product);
           }),
     );
